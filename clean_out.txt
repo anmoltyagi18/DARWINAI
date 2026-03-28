@@ -1,0 +1,56 @@
+Traceback (most recent call last):
+  File "C:\Users\Asus\Desktop\AIGOFIN\test_pipeline.py", line 79, in <module>
+    from ML.api_server import run_analysis
+  File "C:\Users\Asus\Desktop\AIGOFIN\ML\__init__.py", line 9, in <module>
+    from .ai_brain import AIBrain
+  File "C:\Users\Asus\Desktop\AIGOFIN\ML\ai_brain.py", line 11, in <module>
+    import ML.rl_trader as rl_trader
+  File "C:\Users\Asus\Desktop\AIGOFIN\ML\rl_trader.py", line 38, in <module>
+    import gymnasium as gym
+ModuleNotFoundError: No module named 'gymnasium'
+
+============================================================
+  AIGOFIN — Full System Integration Test
+============================================================
+
+[1] Config Module
+  [FAIL] config import  No module named 'gymnasium'
+
+[2] Logger Module
+  [FAIL] logger import  No module named 'gymnasium'
+
+[3] Strategy Engine
+  [PASS] strategy_engine import
+  [PASS] generate_signal returns dict
+  [PASS] signal in {-1,0,1}
+  [PASS] confidence 0-1
+      signal=1 confidence=0.340
+  [FAIL] strategy_engine  'charmap' codec can't encode character '\u2192' in position 85: character maps to <undefined>
+
+[4] Full Analysis Pipeline — AAPL
+  [FAIL] run_analysis  No module named 'gymnasium'
+
+[5] AI Brain
+  [FAIL] ai_brain  No module named 'gymnasium'
+
+[6] Trade Explainer
+  [FAIL] trade_explainer  No module named 'gymnasium'
+
+[7] Backtest Engine
+  [FAIL] backtest_engine  No module named 'gymnasium'
+
+[8] Strategy Evolver
+  [PASS] strategy_evolver import
+  [PASS] evolution returns strategy
+  [PASS] history has entries
+  [PASS] genes present
+      Best strategy: fitness=0.9291 trades=16 genes=4
+
+[9] Live Data Stream — get_live_stock_price
+  [FAIL] live_data_stream  No module named 'gymnasium'
+
+============================================================
+  Tests: 16   Passed: 8   Failed: 8
+  STATUS: 8 FAILURES — see above [FAIL]
+============================================================
+

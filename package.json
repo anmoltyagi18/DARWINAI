@@ -1,0 +1,17 @@
+{
+  "name": "aigofin-trading-system",
+  "version": "1.0.0",
+  "description": "Unified Startup Script for AIGOFIN Python/Next.js System",
+  "scripts": {
+    "dev": "concurrently \"python run_server.py --port 8000\" \"cd frontend && npm run dev\"",
+    "install-all": "npm install && cd frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "start": "cd frontend && npm run start"
+  },
+  "dependencies": {
+    "lightweight-charts": "^5.1.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

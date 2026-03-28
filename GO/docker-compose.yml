@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  go-api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - ENV=production
+      - PYTHON_ENGINE_URL=http://python-engine:5000
+    depends_on:
+      - python-engine
+    restart: unless-stopped
+
+  python-engine:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+    restart: unless-stopped

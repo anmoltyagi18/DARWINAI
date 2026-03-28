@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Explanation Panel — AAPL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f4f0;
+    --bg-tertiary: #eeede8;
+    --text-primary: #1a1a18;
+    --text-secondary: #5f5e5a;
+    --text-tertiary: #9a9890;
+    --border-subtle: rgba(0,0,0,0.10);
+    --border-mid: rgba(0,0,0,0.18);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --green: #1D9E75;
+    --green-bg: #EAF3DE;
+    --green-text: #3B6D11;
+    --red: #D85A30;
+    --red-bg: #FCEBEB;
+    --red-text: #A32D2D;
+    --amber: #BA7517;
+    --amber-bg: #FAEEDA;
+    --amber-text: #854F0B;
+    --blue: #378ADD;
+    --blue-bg: #E6F1FB;
+    --blue-text: #185FA5;
+    --purple: #7F77DD;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1e1e1c;
+      --bg-secondary: #282825;
+      --bg-tertiary: #323230;
+      --text-primary: #f0ede6;
+      --text-secondary: #b4b2a9;
+      --text-tertiary: #888780;
+      --border-subtle: rgba(255,255,255,0.08);
+      --border-mid: rgba(255,255,255,0.16);
+      --green: #5DCAA5;
+      --green-bg: #04342C;
+      --green-text: #9FE1CB;
+      --red: #F0997B;
+      --red-bg: #4A1B0C;
+      --red-text: #F5C4B3;
+      --amber: #EF9F27;
+      --amber-bg: #412402;
+      --amber-text: #FAC775;
+      --blue: #85B7EB;
+      --blue-bg: #042C53;
+      --blue-text: #B5D4F4;
+    }
+  }
+
+  body {
+    font-family: 'Syne', system-ui, sans-serif;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .panel {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    border: 0.5px solid var(--border-subtle);
+    padding: 1.75rem;
+    width: 100%;
+    max-width: 620px;
+    height: fit-content;
+  }
+
+  .tp-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .tp-ticker {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+
+  .tp-ticker span {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    margin-left: 6px;
+  }
+
+  .tp-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .tp-price {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .tp-change {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+  }
+
+  .tp-timestamp {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    text-align: right;
+    margin-bottom: 4px;
+  }
+
+  .refresh-btn {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    color: var(--text-secondary);
+    background: none;
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-md);
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .refresh-btn:hover { background: var(--bg-secondary); }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 10px;
+  }
+
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--border-subtle);
+    margin: 1.25rem 0;
+  }
+
+  /* Metric grid */
+  .grid4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 480px) {
+    .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  .metric {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-bottom: 4px;
+  }
+
+  .metric-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .metric-sub {
+    font-size: 11px;
+    margin-top: 3px;
+  }
+
+  /* Badges */
+  .badge {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: var(--radius-md);
+  }
+
+  .badge-green { background: var(--green-bg); color: var(--green-text); }
+  .badge-amber { background: var(--amber-bg); color: var(--amber-text); }
+  .badge-blue  { background: var(--blue-bg);  color: var(--blue-text);  }
+  .badge-red   { background: var(--red-bg);   color: var(--red-text);  }
+
+  .green  { color: var(--green); }
+  .red    { color: var(--red); }
+  .amber  { color: var(--amber); }
+  .blue   { color: var(--blue); }
+  .muted  { color: var(--text-tertiary); }
+
+  /* Regime card */
+  .regime-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .bar-card {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    margin-bottom: 1rem;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .bar-row:last-child { margin-bottom: 0; }
+
+  .bar-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    min-width: 90px;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-secondary);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.7s cubic-bezier(.25,.8,.25,1);
+  }
+
+  .bar-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    min-width: 28px;
+    text-align: right;
+  }
+
+  /* Risk table */
+  .signal-table {
+    width: 100%;
+  }
+
+  .signal-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 0.5px solid var(--border-subtle);
+  }
+
+  .signal-row:last-child { border-bottom: none; }
+
+  .signal-name {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .signal-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* Risk cards grid */
+  .grid2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .raised-metric {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+  }
+
+  .risk-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+  }
+
+  /* Confidence */
+  .conf-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .conf-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+
+  .conf-num span {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+  }
+
+  .conf-label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+  }
+
+  .conf-bar-wrap { flex: 1; }
+
+  .conf-track {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .conf-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--green), var(--blue));
+    transition: width 0.7s;
+  }
+
+  .conf-axis {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+  }
+
+  /* AI block */
+  .ai-block {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    border-left: 2px solid var(--blue);
+  }
+
+  .ai-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .ai-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--blue);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+  }
+
+  .ai-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--blue-text);
+  }
+
+  .ai-reasoning {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  .footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+</style>
+</head>
+<body>
+
+<div class="panel">
+
+  <!-- Header -->
+  <div class="tp-header">
+    <div>
+      <div class="tp-ticker">AAPL <span>NASDAQ</span></div>
+      <div class="tp-price-row">
+        <span class="tp-price" id="price">$189.42</span>
+        <span class="tp-change green" id="change">+1.24 (+0.66%)</span>
+      </div>
+    </div>
+    <div style="text-align:right;">
+      <div class="tp-timestamp" id="timestamp">Updated 14:32 EST</div>
+      <button class="refresh-btn" onclick="refresh()">Refresh ↻</button>
+    </div>
+  </div>
+
+  <!-- Indicators -->
+  <div class="section-label">Indicator values</div>
+  <div class="grid4" style="margin-bottom:8px;">
+    <div class="metric">
+      <div class="metric-label">RSI (14)</div>
+      <div class="metric-val" id="rsi">58.3</div>
+      <div class="metric-sub amber">Neutral</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">MACD</div>
+      <div class="metric-val green" id="macd">+0.82</div>
+      <div class="metric-sub green">Bullish X</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Vol / Avg</div>
+      <div class="metric-val" id="vol">1.34×</div>
+      <div class="metric-sub amber">Elevated</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">ATR (14)</div>
+      <div class="metric-val" id="atr">2.87</div>
+      <div class="metric-sub muted">Normal</div>
+    </div>
+  </div>
+  <div class="grid4">
+    <div class="metric">
+      <div class="metric-label">BB %B</div>
+      <div class="metric-val">0.64</div>
+      <div class="metric-sub green">Upper half</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">EMA 20/50</div>
+      <div class="metric-val green">↑</div>
+      <div class="metric-sub green">Aligned</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">OBV trend</div>
+      <div class="metric-val green">+3.2%</div>
+      <div class="metric-sub green">Accumulate</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Stoch %K</div>
+      <div class="metric-val" id="stoch">67.1</div>
+      <div class="metric-sub amber">Mid range</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Market Regime -->
+  <div class="regime-header">
+    <div class="section-label" style="margin-bottom:0">Market regime</div>
+    <span class="badge badge-green" id="regime-badge">Trending bull</span>
+  </div>
+  <div class="bar-card">
+    <div class="bar-row">
+      <span class="bar-label">Trend strength</span>
+      <div class="bar-track"><div class="bar-fill" id="bar-trend" style="width:72%;background:var(--green);"></div></div>
+      <span class="bar-num" id="n-trend">72</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">Momentum</span>
+      <div class="bar-track"><div class="bar-fill" id="bar-mom" style="width:65%;background:var(--blue);"></div></div>
+      <span class="bar-num" id="n-mom">65</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">Volatility</span>
+      <div class="bar-track"><div class="bar-fill" id="bar-vol" style="width:38%;background:var(--amber);"></div></div>
+      <span class="bar-num" id="n-vol">38</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">Breadth</span>
+      <div class="bar-track"><div class="bar-fill" id="bar-breadth" style="width:58%;background:var(--purple);"></div></div>
+      <span class="bar-num" id="n-breadth">58</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Risk Level -->
+  <div class="section-label">Risk level</div>
+  <div class="grid2">
+    <div class="raised-metric">
+      <div class="metric-label">Overall risk</div>
+      <div style="display:flex;align-items:center;margin-top:6px;">
+        <span class="risk-dot" style="background:var(--green);"></span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:500;color:var(--text-primary);">Low–Medium</span>
+      </div>
+      <div class="metric-sub muted" style="margin-top:4px;">Score 3.1 / 10</div>
+    </div>
+    <div class="raised-metric">
+      <div class="metric-label">Suggested stop</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:500;color:var(--green);margin-top:6px;">$185.20</div>
+      <div class="metric-sub muted" style="margin-top:4px;">−2.22% / 1.8× ATR</div>
+    </div>
+  </div>
+  <div class="bar-card" style="padding:10px 16px;margin-bottom:0;">
+    <div class="signal-row">
+      <span class="signal-name">Gap risk</span>
+      <span class="signal-val amber">Moderate (earnings +8d)</span>
+    </div>
+    <div class="signal-row">
+      <span class="signal-name">Liquidity</span>
+      <span class="signal-val green">High (avg 58M vol)</span>
+    </div>
+    <div class="signal-row">
+      <span class="signal-name">Correlation SPY</span>
+      <span class="signal-val" style="color:var(--text-primary);">0.82</span>
+    </div>
+    <div class="signal-row">
+      <span class="signal-name">Beta</span>
+      <span class="signal-val" style="color:var(--text-primary);">1.18</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Confidence Score -->
+  <div class="regime-header">
+    <div class="section-label" style="margin-bottom:0">Confidence score</div>
+    <span class="badge badge-blue">High conviction</span>
+  </div>
+  <div class="conf-row">
+    <div>
+      <div class="conf-num" id="conf-num">78<span>%</span></div>
+      <div class="conf-label">Overall confidence</div>
+    </div>
+    <div class="conf-bar-wrap">
+      <div class="conf-track">
+        <div class="conf-fill" id="conf-fill" style="width:78%;"></div>
+      </div>
+      <div class="conf-axis">
+        <span>Low</span><span>Medium</span><span>High</span>
+      </div>
+    </div>
+  </div>
+  <div class="bar-card" style="padding:10px 16px;margin-bottom:0;">
+    <div class="signal-row">
+      <span class="signal-name">Technical signals</span>
+      <span class="signal-val green">82%</span>
+    </div>
+    <div class="signal-row">
+      <span class="signal-name">Volume confirmation</span>
+      <span class="signal-val green">74%</span>
+    </div>
+    <div class="signal-row">
+      <span class="signal-name">Macro alignment</span>
+      <span class="signal-val amber">61%</span>
+    </div>
+    <div class="signal-row">
+      <span class="signal-name">Sentiment</span>
+      <span class="signal-val green">79%</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- AI Reasoning -->
+  <div class="section-label">AI reasoning</div>
+  <div class="ai-block">
+    <div class="ai-header">
+      <span class="ai-dot"></span>
+      <span class="ai-title">Model analysis · claude-sonnet</span>
+    </div>
+    <p class="ai-reasoning">
+      AAPL is currently exhibiting a constructive technical setup. The MACD bullish crossover, combined with RSI holding in neutral-positive territory at 58, suggests sustained upside momentum without overbought risk. Volume running 1.34× the 20-day average confirms institutional participation behind the move. Both the 20 and 50-period EMAs are upward-sloping and aligned, reinforcing the trending bull regime. The primary risk to this thesis is the earnings event in approximately 8 days, which may compress entry timing. A stop below the recent swing low at $185.20 offers a defined 2.2% risk with a favorable reward profile given the trend structure.
+    </p>
+  </div>
+
+  <div class="footer">Trading Explanation Panel · for educational purposes only</div>
+
+</div>
+
+<script>
+  const prices   = [187.10, 189.42, 191.08, 185.90, 193.55, 188.76, 192.33];
+  const regimes  = ['Trending bull','Range bound','Volatile bull','Accumulation','Distribution'];
+  const badgeCls = ['badge-green','badge-green','badge-amber','badge-blue','badge-red'];
+  const bars     = ['bar-trend','bar-mom','bar-vol','bar-breadth'];
+  const nums     = ['n-trend','n-mom','n-vol','n-breadth'];
+
+  function now() {
+    const d = new Date();
+    return d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) + ' EST';
+  }
+
+  function rand(min, max, dec=1) {
+    return parseFloat((Math.random()*(max-min)+min).toFixed(dec));
+  }
+
+  function refresh() {
+    const p   = prices[Math.floor(Math.random()*prices.length)];
+    const chg = rand(-2.5, 2.8);
+    const pct = (chg/p*100).toFixed(2);
+    const isPos = chg >= 0;
+
+    document.getElementById('price').textContent   = '$' + p.toFixed(2);
+    const cel = document.getElementById('change');
+    cel.textContent = (isPos?'+':'')+chg.toFixed(2)+' ('+(isPos?'+':'')+pct+'%)';
+    cel.className   = 'tp-change ' + (isPos ? 'green' : 'red');
+
+    document.getElementById('rsi').textContent   = rand(40,72).toFixed(1);
+    document.getElementById('macd').textContent  = (rand(-1.2,1.8)).toFixed(2);
+    document.getElementById('stoch').textContent = rand(30,80).toFixed(1);
+    document.getElementById('timestamp').textContent = 'Updated ' + now();
+
+    const ri = Math.floor(Math.random()*regimes.length);
+    const badge = document.getElementById('regime-badge');
+    badge.textContent = regimes[ri];
+    badge.className   = 'badge ' + badgeCls[ri];
+
+    bars.forEach((id,i) => {
+      const v = Math.round(rand(25,85,0));
+      document.getElementById(id).style.width = v + '%';
+      document.getElementById(nums[i]).textContent = v;
+    });
+
+    const conf = Math.round(rand(55,92,0));
+    document.getElementById('conf-num').innerHTML = conf + '<span>%</span>';
+    document.getElementById('conf-fill').style.width = conf + '%';
+  }
+
+  document.getElementById('timestamp').textContent = 'Updated ' + now();
+</script>
+
+</body>
+</html>

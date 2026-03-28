@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 189, in _run_module_as_main
+  File "<frozen runpy>", line 112, in _get_module_details
+  File "C:\Users\Asus\Desktop\AIGOFIN\ML\__init__.py", line 9, in <module>
+    from .ai_brain import AIBrain
+  File "C:\Users\Asus\Desktop\AIGOFIN\ML\ai_brain.py", line 21, in <module>
+    from .ai_strategy_discovery import discover_strategies
+  File "C:\Users\Asus\Desktop\AIGOFIN\ML\ai_strategy_discovery.py", line 23, in <module>
+    from .strategy_evolver import StrategyEvolver
+ImportError: cannot import name 'StrategyEvolver' from 'ML.strategy_evolver' (C:\Users\Asus\Desktop\AIGOFIN\ML\strategy_evolver.py)
