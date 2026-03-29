@@ -18,3 +18,6 @@ stable-baselines3
 torch
 shimmy
 websocket-client
+gunicorn
+uvloop
+httptools

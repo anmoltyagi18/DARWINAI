@@ -130,7 +130,7 @@ def main() -> None:
     try:
         uvicorn.run(
             "ML.api_server:app",
-            host="127.0.0.1",
+            host="0.0.0.0",
             port=port,
             reload=False,       # use True during development with --reload flag
             log_level="info",
