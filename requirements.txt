@@ -18,8 +18,3 @@ stable-baselines3
 torch
 shimmy
 websocket-client
-framer-motion
-framer
-lucide-react
-clsx
-tailwind-merge
