@@ -32,13 +32,8 @@ from typing import Optional
 
 import pandas as pd
 
-# ── Project-root on sys.path so `stock_fetcher` is importable ────────────────
-_PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if _PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, _PROJECT_ROOT)
-
 # ── Modular imports (no code duplication) ────────────────────────────────────
-from stock_fetcher import fetch_ohlcv           # root-level utility
+from .stock_fetcher import fetch_ohlcv            # internal package utility
 from .indicators_engine import IndicatorsEngine
 from .strategy_engine import StrategyEngine
 
