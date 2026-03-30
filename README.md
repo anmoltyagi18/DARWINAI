@@ -11,7 +11,7 @@ A professional-grade AI trading platform featuring real-time analysis, genetic s
     *   **Runtime**: Python 3
     *   **Root Directory**: (Leave Blank)
     *   **Build Command**: `pip install -r requirements.txt`
-    *   **Start Command**: `python run_server.py --port $PORT`
+    *   **Start Command**: `uvicorn ML.api_server:app --host 0.0.0.0 --port $PORT`
 3.  **Environment Variables**:
     *   `FINNHUB_API_KEY`: (Get from Finnhub.io)
 4.  **Copy the URL**: Once live, copy your Render URL (e.g., `https://aigofin-api.onrender.com`).

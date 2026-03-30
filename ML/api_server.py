@@ -29,13 +29,19 @@ from __future__ import annotations
 import math
 import random
 import statistics
-import time
-from datetime import datetime, timezone
-from enum import Enum
-from typing import Dict, List, Optional, Tuple
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+# ── Load .env before initializing app ───────────────────────────────────────
+_ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(dotenv_path=_ROOT / ".env")
 
 import numpy as np
 from scipy import stats
+from enum import Enum
+from typing import Dict, List, Tuple, Optional
+from datetime import datetime, timezone
 
 # ── FastAPI (install: pip install fastapi uvicorn) ───────────────────────────
 try:
