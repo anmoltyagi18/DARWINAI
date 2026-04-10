@@ -29,6 +29,7 @@ from __future__ import annotations
 import math
 import random
 import statistics
+import time
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -801,7 +802,7 @@ if FASTAPI_AVAILABLE:
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
